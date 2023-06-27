@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 import axios from 'axios';
 
 function Upload() {
-  const { setAvatar, username, password } = useUserStore();
+  const { setAvatar, username, password, avatar } = useUserStore();
   const [selectedFile, setSelectedFile] = useState({
     fileName: '',
     file: null,
@@ -13,7 +13,11 @@ function Upload() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await getPresignedURL(selectedFile.fileName, selectedFile.file);
+    if (selectedFile.file) {
+      await getPresignedURL(selectedFile.fileName, selectedFile.file);
+    } else {
+      alert('Please upload another image to save');
+    }
   };
 
   const getPresignedURL = async (filename, file) => {
@@ -77,15 +81,26 @@ function Upload() {
     const fileExtension = file.name.split('.').pop();
     const fileName = `${filename}.${fileExtension}`;
     if (file) {
-      setSelectedFile({
-        fileName,
-        file,
-      });
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImageUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
+      // Check file size (in bytes)
+      const fileSize = file.size;
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (fileSize > maxSize) {
+        alert('File size exceeds the maximum limit of 5MB.');
+        setSelectedFile({
+          fileName: '',
+          file: null,
+        });
+      } else {
+        setSelectedFile({
+          fileName,
+          file,
+        });
+        const reader = new FileReader();
+        reader.onload = () => {
+          setImageUrl(reader.result);
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -107,7 +122,7 @@ function Upload() {
         {selectedFile.file ? (
           <img src={imageUrl} alt="Selected Image" />
         ) : (
-          <img src="avarta.jpg" alt="Selected Image" />
+          <img src={`${avatar ? `${avatar}` : 'avarta.jpg'}`} alt="Selected Image" />
         )}
       </div>
     </div>

@@ -1,38 +1,90 @@
-.App {
-  text-align: center;
+.authentication-main{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+.authentication-main .auth{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: gainsboro;
+    width: 40%;
+    height: 400px;
+}
+.authentication-main .auth h1{
+
+}
+.logout{
+    text-align: center;
+    margin: 30px 0px 0px 0px;
+   
+}
+.form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.form input, .form button, .logout button{
+    margin: 10px;
+    padding: 10px;
+    border: none;
+    outline: none;
+}
+.form input:hover, .form button:hover, .logout button:hover{
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.container{
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+.container-modal{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+}
+.ant-card-body{
+    display: none;
+}
+.show-img{
+    border-left: 1px solid black;
+}
+.show-img img{
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    margin: 10px 50px;
+    border: 1px solid black;
+
+}
+.all-button{
+    display: flex;
+    flex-direction: column;
+    margin: 10px 50px;
+   
+}
+.all-button button{
+    margin: 10px;
+    padding: 10px;
+    border: none;
+}
+.all-button button:hover{
+    background-color: green;
+    color: white;
+}
+.ant-card-actions:hover{
+    background-color: rgb(242 242 242)
+}
+.ant-card-actions>li >span >.anticon.icon-container:hover {
+    color: black;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+/* // "start": "env-cmd -f .env react-scripts start", */
+/* "start": "node -r dotenv/config node_modules/react-scripts/scripts/start.js",
+"build": "env-cmd -f ./.env react-scripts build", */

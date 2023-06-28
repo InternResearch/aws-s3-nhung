@@ -7,25 +7,27 @@ import LoginForm from './component/LoginForm';
 import useUserStore from './store/userStore';
 import SignUp from './component/SignUp';
 import './App.css';
-
+import bcrypt from 'bcryptjs';
+const saltRounds = 10;
 const { Meta } = Card;
 const App = () => {
   const { setUsername, setAvatar, username, avatar, password, setPassword } = useUserStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleLoginToBE = async (username, password) => {
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
     try {
       const response = await axios.post('http://localhost:5000/api/auth/login', {
         username,
-        password,
+        password: hashedPassword,
       });
       const {
         avatar,
-        password: userPassword,
+        // password: userPassword,
         username: responseUsername,
       } = response.data.data.account;
       setUsername(responseUsername);
-      setPassword(userPassword);
+      setPassword(password);
       setAvatar(avatar);
     } catch (error) {
       console.error(error);
@@ -39,11 +41,11 @@ const App = () => {
       });
       const {
         avatar,
-        password: userPassword,
+        // password: userPassword,
         username: responseUsername,
       } = response.data.data.account;
       setUsername(responseUsername);
-      setPassword(userPassword);
+      setPassword(password);
       setAvatar(avatar);
     } catch (error) {
       console.error(error);

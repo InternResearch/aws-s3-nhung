@@ -58,10 +58,8 @@ function Upload() {
         headers: { Authorization: `Basic ${window.btoa(`${username}:${password}`)}` },
       },
     );
-    console.log('00000000000000, sucess', res);
     const parsedData = JSON.parse(res.config.data);
     const path = parsedData.path;
-    console.log('----------', path);
     setAvatar(path);
   };
 

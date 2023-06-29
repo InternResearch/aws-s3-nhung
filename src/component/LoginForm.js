@@ -6,7 +6,6 @@ const LoginForm = ({ handleLoginToBE }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     handleLoginToBE(username, password);
-    console.log('username, password----', username, password);
     // Reset the form fields
     setUsername('');
     setPassword('');

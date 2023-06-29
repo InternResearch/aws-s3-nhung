@@ -60,6 +60,7 @@ function Upload() {
     );
     const parsedData = JSON.parse(res.config.data);
     const path = parsedData.path;
+    console.log('path', path);
     setAvatar(path);
   };
 

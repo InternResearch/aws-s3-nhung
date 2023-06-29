@@ -19,7 +19,7 @@ const App = () => {
     try {
       const response = await axios.post('http://localhost:5000/api/auth/login', {
         username,
-        password: hashedPassword,
+        password,
       });
       const {
         avatar,
@@ -66,8 +66,6 @@ const App = () => {
     setPassword('');
     setAvatar('');
   };
-
-  console.log('3333333', avatar, username, password);
 
   return (
     <div className="app">

@@ -30,13 +30,14 @@ function Upload() {
         },
       );
       const url = response.data.data.signedUrl;
-      putFileToS3(url, file);
+      const key = response.data.data.key;
+      putFileToS3(url, file, key);
     } catch (err) {
       console.error(`Error uploading image: ${err.message}`);
     }
   };
 
-  const putFileToS3 = async (url, file) => {
+  const putFileToS3 = async (url, file, key) => {
     const result = await axios.put(url, file, {
       headers: {
         'Content-Type': file.type,
@@ -44,15 +45,15 @@ function Upload() {
     });
     const expand = file.type.split('/')[1];
     if (result.status == 200) {
-      postPathToBE(expand);
+      postPathToBE(expand, key);
     }
   };
 
-  const postPathToBE = async (expand) => {
+  const postPathToBE = async (expand, key) => {
     const res = await axios.post(
       `http://localhost:5000/api/images/upload`,
       {
-        path: `${process.env.REACT_APP_S3_BUCKET_PATH}/${username}/avatar.${expand}`,
+        path: `${process.env.REACT_APP_S3_BUCKET_PATH}/${key}`,
       },
       {
         headers: { Authorization: `Basic ${window.btoa(`${username}:${password}`)}` },
@@ -60,7 +61,6 @@ function Upload() {
     );
     const parsedData = JSON.parse(res.config.data);
     const path = parsedData.path;
-    console.log('path', path);
     setAvatar(path);
   };
 

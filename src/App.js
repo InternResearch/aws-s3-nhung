@@ -13,7 +13,6 @@ const { Meta } = Card;
 const App = () => {
   const { setUsername, setAvatar, username, avatar, password, setPassword } = useUserStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const handleLoginToBE = async (username, password) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     try {

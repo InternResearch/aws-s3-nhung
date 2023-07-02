@@ -6,7 +6,7 @@ function Upload() {
   const { setAvatar, username, password, avatar } = useUserStore();
   const [selectedFile, setSelectedFile] = useState({
     fileName: '',
-    file: null,
+    file: null
   });
   const [imageUrl, setImageUrl] = useState('');
   const fileInputRef = useRef(null);
@@ -26,11 +26,13 @@ function Upload() {
         `http://localhost:5000/api/images/signed-url?fileType=${file.type}`,
         {},
         {
-          headers: { Authorization: `Basic ${window.btoa(`${username}:${password}`)}` },
-        },
+          headers: {
+            Authorization: `Basic ${window.btoa(`${username}:${password}`)}`
+          }
+        }
       );
-      const url = response.data.data.signedUrl;
-      const key = response.data.data.key;
+      const url = response.data.signedUrl;
+      const key = response.data.key;
       putFileToS3(url, file, key);
     } catch (err) {
       console.error(`Error uploading image: ${err.message}`);
@@ -40,30 +42,37 @@ function Upload() {
   const putFileToS3 = async (url, file, key) => {
     const result = await axios.put(url, file, {
       headers: {
-        'Content-Type': file.type,
-      },
+        'Content-Type': file.type
+      }
     });
-    const expand = file.type.split('/')[1];
-    if (result.status == 200) {
-      postPathToBE(expand, key);
+    if (result.status === 200) {
+      postPathToBE(key);
     }
   };
 
-  const postPathToBE = async (expand, key) => {
-    const res = await axios.post(
+  const postPathToBE = async (key) => {
+    await axios.post(
       `http://localhost:5000/api/images/upload`,
       {
-        path: `${process.env.REACT_APP_S3_BUCKET_PATH}/${key}`,
+        path: `${key}`
       },
       {
-        headers: { Authorization: `Basic ${window.btoa(`${username}:${password}`)}` },
-      },
+        headers: {
+          Authorization: `Basic ${window.btoa(`${username}:${password}`)}`
+        }
+      }
     );
-    const parsedData = JSON.parse(res.config.data);
-    const path = parsedData.path;
-    setAvatar(path);
+    setAvatarAfterUploading();
   };
 
+  const setAvatarAfterUploading = async () => {
+    const res = await axios.get(`http://localhost:5000/api/images`, {
+      headers: {
+        Authorization: `Basic ${window.btoa(`${username}:${password}`)}`
+      }
+    });
+    setAvatar(res.data.signedUrl);
+  };
   const handleButtonClick = () => {
     // Trigger the file input's click event
     fileInputRef.current.click();
@@ -87,12 +96,12 @@ function Upload() {
         alert('File size exceeds the maximum limit of 5MB.');
         setSelectedFile({
           fileName: '',
-          file: null,
+          file: null
         });
       } else {
         setSelectedFile({
           fileName,
-          file,
+          file
         });
         const reader = new FileReader();
         reader.onload = () => {
@@ -121,7 +130,10 @@ function Upload() {
         {selectedFile.file ? (
           <img src={imageUrl} alt="Selected Image" />
         ) : (
-          <img src={`${avatar ? `${avatar}` : 'avarta.jpg'}`} alt="Selected Image" />
+          <img
+            src={`${avatar ? `${avatar}` : 'avarta.jpg'}`}
+            alt="Selected Image"
+          />
         )}
       </div>
     </div>

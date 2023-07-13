@@ -1,6 +1,6 @@
 import { CameraOutlined } from '@ant-design/icons';
 import { Card, Modal } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Upload from './component/Upload';
 import axios from 'axios';
 import LoginForm from './component/LoginForm';
@@ -11,27 +11,34 @@ import bcrypt from 'bcryptjs';
 const saltRounds = 10;
 const { Meta } = Card;
 const App = () => {
-  const { setUsername, setAvatar, username, avatar, password, setPassword } =
-    useUserStore();
+  const { setUsername, setAvatar, username, avatar, password, setPassword } = useUserStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  useEffect(() => {
+    getAvatar();
+  }, []);
+  const getAvatar = async () => {
+    const res = await axios.get(`http://localhost:5000/api/images`, {
+      headers: {
+        Authorization: `Basic ${window.btoa(`${username}:${password}`)}`,
+      },
+    });
+    setAvatar(res.data.signedUrl);
+  };
   const handleLoginToBE = async (username, password) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     try {
-      const response = await axios.post(
-        'http://localhost:5000/api/auth/login',
-        {
-          username,
-          password
-        }
-      );
+      const response = await axios.post('http://localhost:5000/api/auth/login', {
+        username,
+        password,
+      });
       const { username: responseUsername } = response.data.data.account;
 
       setUsername(responseUsername);
       setPassword(password);
       const res = await axios.get(`http://localhost:5000/api/images`, {
         headers: {
-          Authorization: `Basic ${window.btoa(`${username}:${password}`)}`
-        }
+          Authorization: `Basic ${window.btoa(`${username}:${password}`)}`,
+        },
       });
       setAvatar(res.data.signedUrl);
     } catch (error) {
@@ -40,17 +47,14 @@ const App = () => {
   };
   const handleSignUpToBE = async (username, password) => {
     try {
-      const response = await axios.post(
-        'http://localhost:5000/api/auth/register',
-        {
-          username,
-          password
-        }
-      );
+      const response = await axios.post('http://localhost:5000/api/auth/register', {
+        username,
+        password,
+      });
       const {
         avatar,
         // password: userPassword,
-        username: responseUsername
+        username: responseUsername,
       } = response.data.data.account;
       setUsername(responseUsername);
       setPassword(password);
@@ -97,7 +101,7 @@ const App = () => {
         <div className="container">
           <Card
             style={{
-              width: 300
+              width: 300,
             }}
             cover={
               <img
@@ -107,23 +111,19 @@ const App = () => {
                   height: '200px',
                   objectFit: 'cover',
                   margin: '10px auto',
-                  border: '1px solid black'
+                  border: '1px solid black',
                 }}
                 alt="example"
                 src={`${avatar ? `${avatar}` : 'avarta.jpg'}`}
               />
             }
             actions={[
-              <CameraOutlined
-                key="change avatar"
-                onClick={showModal}
-                className="icon-container"
-              />
+              <CameraOutlined key="change avatar" onClick={showModal} className="icon-container" />,
             ]}
           >
             <Meta
               style={{
-                display: 'none'
+                display: 'none',
               }}
             />
           </Card>
